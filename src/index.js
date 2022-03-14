@@ -1,10 +1,14 @@
 import "./styles.css";
 
-const onClickAdd = (text = "") => {
-  // テキストボックスの値を取得し初期化する
-  const inputText = text ? text : document.getElementById("add-text").value;
-  document.getElementById("add-text").value = "";
+/**
+ * incomplate-areaからtargetの要素を削除する
+ * @param {*} target
+ */
+const deleteFromIncomplateElement = (target) => {
+  document.getElementById("incomplate-area").removeChild(target);
+};
 
+const createIncomplatelist = (text) => {
   // DOM生成
   // liタグの作成
   const li = document.createElement("li");
@@ -12,13 +16,41 @@ const onClickAdd = (text = "") => {
 
   // spanタグの生成
   const span = document.createElement("span");
-  span.innerText = inputText;
+  span.innerText = text;
 
   // button（完了）タグの生成
   const complateButton = document.createElement("button");
   complateButton.innerText = "完了";
   complateButton.addEventListener("click", () => {
-    onClickComplate(complateButton.parentNode);
+    deleteFromIncomplateElement(complateButton.parentNode);
+
+    // DOM生成
+    // liタグの作成
+    const addTarget = complateButton.parentNode;
+
+    const text = addTarget.firstElementChild.innerText;
+    addTarget.textContent = null;
+
+    const backLi = document.createElement("li");
+    backLi.className = "list-row";
+
+    const backSpan = document.createElement("span");
+    backSpan.innerText = text;
+
+    const backButton = document.createElement("button");
+    backButton.innerText = "戻す";
+    backButton.addEventListener("click", () => {
+      const deleteTarget = backButton.parentNode;
+      document.getElementById("complate-area").removeChild(deleteTarget);
+
+      const text = deleteTarget.firstElementChild.innerText;
+      createIncomplatelist(text);
+    });
+
+    backLi.appendChild(backSpan);
+    backLi.appendChild(backButton);
+
+    document.getElementById("complate-area").appendChild(backLi);
   });
 
   // button（戻す）タグの生成
@@ -38,44 +70,12 @@ const onClickAdd = (text = "") => {
   document.getElementById("incomplate-area").appendChild(li);
 };
 
-/**
- * incomplate-areaからtargetの要素を削除する
- * @param {*} target
- */
-const deleteFromIncomplateElement = (target) => {
-  document.getElementById("incomplate-area").removeChild(target);
-};
+const onClickAdd = () => {
+  // テキストボックスの値を取得し初期化する
+  const inputText = document.getElementById("add-text").value;
+  document.getElementById("add-text").value = "";
 
-/**
- *
- * @param {*} target
- */
-const onClickComplate = (target) => {
-  // DOM生成
-  // liタグの作成
-  const backLi = document.createElement("li");
-  backLi.className = "list-row";
-
-  const backSpan = document.createElement("span");
-  backSpan.innerText = target.firstElementChild.innerText;
-
-  const backButton = document.createElement("button");
-  backButton.innerText = "戻す";
-  backButton.addEventListener("click", onClickBack(backSpan.innerText));
-
-  backLi.appendChild(backSpan);
-  backLi.appendChild(backButton);
-
-  document.getElementById("complate-area").appendChild(backLi);
-  deleteFromIncomplateElement(target);
-};
-
-/**
- *
- * @param {*} target
- */
-const onClickBack = (text) => {
-  onClickAdd(text);
+  createIncomplatelist(inputText);
 };
 
 document
